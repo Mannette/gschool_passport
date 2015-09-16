@@ -39,7 +39,7 @@ app.use('/users', users);
 var Account = require('./models/account');
 passport.use(new LocalStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
-passsport.deserializeUser(Account.deserializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
 // mongoose
 mongoose.connect('mongodb://localhost/passport_local_mongoose_express4');
