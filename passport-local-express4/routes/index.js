@@ -15,7 +15,7 @@ router.get('/register', function(req, res) {
 router.post('/register', function(req, res) {
     Account.register(new Account({ username : req.body.username }), req.body.password, function(err, account) {
         if (err) {
-            return res.render('register', { info : 'Sorry. That username already exists. Try again.' });
+            return res.render('register', { info: 'Sorry. That username already exists. Try again.' });
         }
 
         passport.authenticate('local')(req, res, function() {
@@ -25,11 +25,23 @@ router.post('/register', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-    res.render('login', { user : req.user });
+  res.render('login', { user: req.user });
 });
 
-router.post('/login', passport.authenticate('local'), function(req, res) {
-    res.redirect('/');
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      return next(err);
+    } else if (!user) {
+      return res.render('login', {error: 'Invalid username or password'});
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect('/');
+    });
+  })(req, res, next);
 });
 
 router.get('/logout', function(req, res) {
